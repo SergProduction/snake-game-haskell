@@ -14,5 +14,5 @@ backgroundColor = makeColor 0 0 0 255
 
 
 main :: IO ()
-main = play window backgroundColor 30 initialGame gameAsPicture transformGame (const id)
+main = play window backgroundColor 60 initialGame gameAsPicture transformGame tic
 
