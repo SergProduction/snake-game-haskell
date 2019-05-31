@@ -12,19 +12,26 @@ transformCoords (x, y) = (
                           (-) y $ fromIntegral screenHeight * (-0.5)
                          )
 
+subPoint :: Point -> Point -> Point
+subPoint (ax, ay) (bx, by) = (ax - bx, ay - by)
+
+
+pythagor :: Point -> Float
+pythagor (x, y) = sqrt $ (x**2) + (y**2)
+
+
+nextPoint :: Point -> Point -> Float -> Float -> Point
+nextPoint (sourceX, sourceY) (subX, subY) speed vecLength =
+  ( subX / vecLength * speed + sourceX
+  , subY / vecLength * speed + sourceY
+  )
 
 nextCoord :: Game -> Point -> Point
 nextCoord game mousePoint =
   let
-    (px, py) = pos game
-    (mx, my) = mousePoint
-    dirX = mx - px
-    dirY = my - py
-    distance = sqrt $ (dirX**2) + (dirY**2)
-    nextPointPos =
-      ( dirX / distance * (speed game) + px
-      , dirY / distance * (speed game) + py
-      )
+    (subX, subY) = subPoint mousePoint (pos game)
+    vecLength = pythagor (subX, subY)
+    nextPointPos = nextPoint (pos game) (subX, subY) (speed game) vecLength
   in
     nextPointPos
 
@@ -45,7 +52,7 @@ transformGame event game =
                             (normX, normY) = transformCoords (x, y)
                             nextPointPos = nextCoord game (normX, normY)
                           in
-                            game { endPos = (normX, normY), pos = nextPointPos }
+                            game { endPos = (normX, normY) }
     _ -> game
 
 
